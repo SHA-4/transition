@@ -42,5 +42,18 @@ func runTest(pronouns [][]string) {
         text, _ := reader.ReadString('\n')
         formattedText := strings.ToLower(strings.TrimSuffix(text, "\n"))
 
-        fmt.Println(strings.ToLower(randomPronoun[1]) == formattedText, "\n")
+        isCorrect := strings.ToLower(randomPronoun[1]) == formattedText
+
+        if !isCorrect {
+                showIncorrect(randomPronoun)
+                reader.ReadString('\n')
+        }
+        fmt.Print("\n")
 }
+
+func showIncorrect(pronoun []string) {
+        fmt.Println("\nIncorrect")
+        fmt.Println(pronoun[0] + "'s correct pronouns are " + pronoun[1] + " and " + pronoun[2])
+        fmt.Print("\nPress any key to continue")
+}
+
