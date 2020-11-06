@@ -26,10 +26,23 @@ func main() {
                 log.Fatal("Error reading csv data", err)
         }
 
+        clearScreen()
         for {
                 runTest(pronouns)
         }
 }
+
+// See ANSI escape codes here
+// https://en.wikipedia.org/wiki/ANSI_escape_code
+func runCSI(command string) {
+        fmt.Printf("\033[" + command)
+}
+
+func clearScreen() {
+        runCSI("2J")
+        runCSI("1;1H")
+}
+
 
 func init() {
     rand.Seed(time.Now().UnixNano())
