@@ -4,6 +4,7 @@ import (
         "bufio"
         "encoding/csv"
         "fmt"
+        "golang.org/x/sys/unix"
         "log"
         "math/rand"
         "os"
@@ -26,10 +27,19 @@ func main() {
                 log.Fatal("Error reading csv data", err)
         }
 
-        clearScreen()
+        resetScreen()
         for {
                 runTest(pronouns)
         }
+}
+
+func getWindowSize() (*unix.Winsize, error) {
+	size, err := unix.IoctlGetWinsize(int(os.Stdout.Fd()), unix.TIOCGWINSZ)
+	if err != nil {
+		return nil, err
+	}
+
+	return size, nil
 }
 
 // See ANSI escape codes here
@@ -40,9 +50,12 @@ func runCSI(command string) {
 
 func clearScreen() {
         runCSI("2J")
-        runCSI("1;1H")
 }
 
+func resetScreen() {
+        clearScreen()
+        runCSI("1;1H")
+}
 
 func init() {
     rand.Seed(time.Now().UnixNano())
@@ -64,8 +77,25 @@ func runTest(pronouns [][]string) {
         fmt.Print("\n")
 }
 
+func printInCenter(text string) {
+        size, err := getWindowSize()
+        textLength := len(text)
+        if err != nil {
+                fmt.Println(text)
+        }
+
+        var halfCol int
+        if int(size.Col) > textLength {
+                halfCol = int(float64(int(size.Col) - textLength) / float64(2))
+        } else {
+                halfCol = 0
+        }
+        padding := strings.Repeat(" ", halfCol)
+        fmt.Printf("%s%s\n", padding, text)
+}
+
 func showIncorrect(pronoun []string) {
-        fmt.Println("\nIncorrect")
+        printInCenter("Incorrect")
         fmt.Println(pronoun[0] + "'s correct pronouns are " + pronoun[1] + " and " + pronoun[2])
         fmt.Print("\nPress any key to continue")
 }
