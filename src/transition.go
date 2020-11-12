@@ -27,7 +27,7 @@ func main() {
                 log.Fatal("Error reading csv data", err)
         }
 
-        resetScreen()
+        resetToMiddle()
         for {
                 runTest(pronouns)
         }
@@ -61,6 +61,22 @@ func init() {
     rand.Seed(time.Now().UnixNano())
 }
 
+func resetToMiddle () {
+        size, err := getWindowSize()
+
+        if err != nil {
+                resetScreen()
+                return
+        }
+
+        clearScreen()
+        // if less than 10, no point in vertical centering
+        if size.Row > 10 {
+                command := fmt.Sprintf("%d;1H", (size.Row - 10) / 2) 
+                runCSI(command)
+        }
+}
+
 func runTest(pronouns [][]string) {
         randomPronoun := pronouns[rand.Intn(len(pronouns))]
         reader := bufio.NewReader(os.Stdin)
@@ -74,7 +90,7 @@ func runTest(pronouns [][]string) {
                 showIncorrect(randomPronoun)
                 reader.ReadString('\n')
         }
-        fmt.Print("\n")
+        resetToMiddle()
 }
 
 func printInCenter(text string) {
