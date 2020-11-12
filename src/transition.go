@@ -64,7 +64,7 @@ func init() {
 func runTest(pronouns [][]string) {
         randomPronoun := pronouns[rand.Intn(len(pronouns))]
         reader := bufio.NewReader(os.Stdin)
-        fmt.Print(randomPronoun[0] + "\n")
+        fmt.Println(randomPronoun[0])
         text, _ := reader.ReadString('\n')
         formattedText := strings.ToLower(strings.TrimSuffix(text, "\n"))
 
@@ -90,12 +90,27 @@ func printInCenter(text string) {
         } else {
                 halfCol = 0
         }
-        padding := strings.Repeat(" ", halfCol)
-        fmt.Printf("%s%s\n", padding, text)
+        startPadding := strings.Repeat(" ", halfCol)
+        // we want to add end padding so background highlighting works
+        endPadding := strings.Repeat(" ", int(size.Col) - halfCol - textLength)
+        fmt.Printf("%s%s%s\n", startPadding, text, endPadding)
+}
+
+func setColor(code string) {
+        fmt.Printf("\u001B[%sm", code)
+}
+
+func resetColor() {
+        setColor("0")
 }
 
 func showIncorrect(pronoun []string) {
+        // red text
+        setColor("31")
+        // grey background
+        setColor("47")
         printInCenter("Incorrect")
+        resetColor()
         fmt.Println(pronoun[0] + "'s correct pronouns are " + pronoun[1] + " and " + pronoun[2])
         fmt.Print("\nPress any key to continue")
 }
