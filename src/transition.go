@@ -92,6 +92,11 @@ func runTest(pronouns [][]string) {
                 reader.ReadString('\n')
         }
         resetToMiddle()
+
+        // rerun with same person
+        if !isCorrect {
+                runTest([][]string{randomPronoun})
+        }
 }
 
 func printInCenter(text string) {
