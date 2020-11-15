@@ -28,8 +28,13 @@ func main() {
         }
 
         resetToMiddle()
+        lastIsCorrect := true
+        var randomPronoun []string
         for {
-                runTest(pronouns)
+                if lastIsCorrect {
+                        randomPronoun = pronouns[rand.Intn(len(pronouns))]
+                }
+                lastIsCorrect = runTest(randomPronoun)
         }
 }
 
@@ -72,31 +77,27 @@ func resetToMiddle () {
         clearScreen()
         // if less than 10, no point in vertical centering
         if size.Row > 10 {
-                command := fmt.Sprintf("%d;1H", (size.Row - 10) / 2) 
+                command := fmt.Sprintf("%d;1H", (size.Row - 10) / 2)
                 runCSI(command)
         }
 }
 
-func runTest(pronouns [][]string) {
-        randomPronoun := pronouns[rand.Intn(len(pronouns))]
+func runTest(pronoun []string) (bool) {
         reader := bufio.NewReader(os.Stdin)
-        fmt.Println(randomPronoun[0])
+        fmt.Println(pronoun[0])
         fmt.Println()
         text, _ := reader.ReadString('\n')
         formattedText := strings.ToLower(strings.TrimSuffix(text, "\n"))
 
-        isCorrect := strings.ToLower(randomPronoun[1]) == formattedText
+        isCorrect := strings.ToLower(pronoun[1]) == formattedText
 
         if !isCorrect {
-                showIncorrect(randomPronoun)
+                showIncorrect(pronoun)
                 reader.ReadString('\n')
         }
         resetToMiddle()
 
-        // rerun with same person
-        if !isCorrect {
-                runTest([][]string{randomPronoun})
-        }
+        return isCorrect
 }
 
 func printInCenter(text string) {
