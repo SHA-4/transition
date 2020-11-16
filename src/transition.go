@@ -12,6 +12,8 @@ import (
         "time"
 )
 
+const defaultRuns = 10
+
 func main() {
         f, err := os.Open(".pronouns")
         if err != nil {
@@ -27,15 +29,33 @@ func main() {
                 log.Fatal("Error reading csv data", err)
         }
 
+        runPractice(pronouns)
+}
+
+func runPractice(pronouns [][]string) {
         resetToMiddle()
+
         lastIsCorrect := true
+        numCorrect := 0
+        start := time.Now()
         var randomPronoun []string
-        for {
+        for i := 0; i < defaultRuns; i++ {
                 if lastIsCorrect {
                         randomPronoun = pronouns[rand.Intn(len(pronouns))]
                 }
                 lastIsCorrect = runTest(randomPronoun)
+                if lastIsCorrect {
+                        numCorrect += 1
+                }
         }
+        end := time.Now()
+        elapsed := end.Sub(start)
+        printStats(elapsed, numCorrect)
+}
+
+func printStats(elapsed time.Duration, numCorrect int) {
+        fmt.Println("That took", elapsed)
+        fmt.Println("With", numCorrect, "correct")
 }
 
 func getWindowSize() (*unix.Winsize, error) {
