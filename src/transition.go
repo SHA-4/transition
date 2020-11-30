@@ -50,12 +50,12 @@ func runPractice(pronouns [][]string) {
         }
         end := time.Now()
         elapsed := end.Sub(start)
-        printStats(elapsed, numCorrect)
+        printStats(elapsed, numCorrect, defaultRuns)
 }
 
-func printStats(elapsed time.Duration, numCorrect int) {
-        fmt.Println("That took", elapsed)
-        fmt.Println("With", numCorrect, "correct")
+func printStats(elapsed time.Duration, numCorrect int, runCount int) {
+        fmt.Println("Time:", elapsed)
+        fmt.Printf("With %d/%d (%.2f%%) correct", numCorrect, runCount, float64(100 * numCorrect) / float64(runCount))
 }
 
 func getWindowSize() (*unix.Winsize, error) {
