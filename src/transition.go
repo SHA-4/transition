@@ -36,6 +36,7 @@ func runPractice(pronouns [][]string) {
         resetToMiddle()
 
         lastIsCorrect := true
+        isExiting := false
         numCorrect := 0
         start := time.Now()
         var randomPronoun []string
@@ -43,7 +44,13 @@ func runPractice(pronouns [][]string) {
                 if lastIsCorrect {
                         randomPronoun = pronouns[rand.Intn(len(pronouns))]
                 }
-                lastIsCorrect = runTest(randomPronoun)
+                isExiting, lastIsCorrect = runTest(randomPronoun)
+                resetToMiddle()
+
+                if isExiting {
+                        break
+                }
+
                 if lastIsCorrect {
                         numCorrect += 1
                 }
@@ -102,12 +109,17 @@ func resetToMiddle () {
         }
 }
 
-func runTest(pronoun []string) (bool) {
+// returns (exit status, is correct or not)
+func runTest(pronoun []string) (bool, bool) {
         reader := bufio.NewReader(os.Stdin)
         fmt.Println(pronoun[0])
         fmt.Println()
         text, _ := reader.ReadString('\n')
         formattedText := strings.ToLower(strings.TrimSuffix(text, "\n"))
+
+        if formattedText == "exit" {
+                return true, true
+        }
 
         isCorrect := strings.ToLower(pronoun[1]) == formattedText
 
@@ -115,9 +127,8 @@ func runTest(pronoun []string) (bool) {
                 showIncorrect(pronoun)
                 reader.ReadString('\n')
         }
-        resetToMiddle()
 
-        return isCorrect
+        return false, isCorrect
 }
 
 func printInCenter(text string) {
