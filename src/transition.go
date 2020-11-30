@@ -61,8 +61,14 @@ func runPractice(pronouns [][]string) {
 }
 
 func printStats(elapsed time.Duration, numCorrect int, runCount int) {
-        fmt.Println("Time:", elapsed)
-        fmt.Printf("With %d/%d (%.2f%%) correct", numCorrect, runCount, float64(100 * numCorrect) / float64(runCount))
+        elapsedSeconds := elapsed.Seconds()
+        fmt.Printf("Time: %.2fs\n", elapsedSeconds)
+        fmt.Printf("With %d/%d (%.2f%%) correct\n", numCorrect, runCount, float64(100 * numCorrect) / float64(runCount))
+
+        if numCorrect != runCount {
+                adjustAmount := float64(5 * (runCount - numCorrect))
+                fmt.Printf("Adjusted Time: %.2fs\n", adjustAmount + elapsedSeconds)
+        }
 }
 
 func getWindowSize() (*unix.Winsize, error) {
