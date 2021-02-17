@@ -8,6 +8,7 @@ import (
         "log"
         "math/rand"
         "os"
+        "path/filepath"
         "strings"
         "time"
 )
@@ -15,7 +16,14 @@ import (
 const defaultRuns = 10
 
 func main() {
-        f, err := os.Open(".pronouns")
+        home, err := os.UserHomeDir();
+        if err != nil {
+                log.Fatal("Error getting home directory", err)
+        }
+
+        pronounPath := filepath.Clean(home + "/.pronouns")
+        f, err := os.Open(pronounPath)
+
         if err != nil {
                 log.Fatal("Error reading pronoun file", err)
         }
